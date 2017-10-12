@@ -17,6 +17,7 @@ const fetch = require('node-fetch');
 const morgan = require('morgan');
 const ngrok = require('ngrok');
 const session = require('express-session');
+const mqtt = require('mqtt')
 
 // internal app deps
 const google_ha = require('./../smart-home-app');
@@ -39,6 +40,8 @@ app.use(session({
   cookie: {secure: false}
 }));
 const deviceConnections = {};
+
+var mqttClient  = mqtt.connect('http://openhab:1883')
 
 /**
  * auth method
@@ -359,6 +362,7 @@ app.smartHomeExec = function (uid, device) {
   datastore.execDevice(uid, device);
   let executedDevice = datastore.getStatus(uid, [device.id]);
   console.log('smartHomeExec executedDevice', executedDevice);
+  mqttClient.publish('elements/google-home', JSON.stringify(executedDevice));
   return executedDevice;
 };
 

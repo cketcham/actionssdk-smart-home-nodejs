@@ -95,6 +95,9 @@ limitations under the License.
                 for (var i=0; i<4; i++) {
                     this._addLight();
                 }
+                this._addThermostat();
+                this._addThermostat();
+                this._addSwitch();
 
             },
 
@@ -137,8 +140,8 @@ limitations under the License.
             },
 
             _getNickname: function(lightId) {
-                var names = ['table lamp', 'red lamp', 'doorway', 'stairway'];
-                return names[lightId%4];
+                var names = ['Dining Table Light', 'Shelf Light', 'Kitchen Light', 'Cabinet Light', "Living Room Air Conditioner", "Bedroom Air Conditioner", "Projector"];
+                return names[(lightId-1)%names.length];
             },
 
             _addLight: function () {
@@ -178,6 +181,91 @@ limitations under the License.
                             name: 'cerulian',
                             spectrumRGB: 31655
                         }
+                    }
+                });
+
+                // hack to make more light show when they are added
+                setTimeout(function () {
+                    this.$['light-list'].fire('iron-resize');
+                }.bind(this), 10);
+            },
+
+            _addThermostat: function () {
+                var lightId = getNextLightId();
+                this.push('lights', {
+                    id: String(lightId),
+                    properties : {
+                        type: 'action.devices.types.THERMOSTAT',
+                        traits: [
+                            'action.devices.traits.OnOff',
+                            'action.devices.traits.TemperatureSetting'
+                        ],
+                        name: {
+                            defaultNames: ['Smart Thermostat'],
+                            name: 'Smart Thermostat ' + lightId,
+                            nicknames: [ this._getNickname(lightId) ]
+                        },
+                        willReportState: false,
+                        attributes: {
+                            availableThermostatModes: "off,heat,cool,on",
+                            thermostatTemperatureUnit: "F"
+                        },
+                        roomHint: 'living room',
+                        deviceInfo: {
+                            manufacturer: 'Smart Home Provider',
+                            model: 'g1337',
+                            swVersion: '1.0.11',
+                            hwVersion: '1.0'
+                        },
+                        customData: {
+                            smartHomeProviderId: 'FkldJVJCmDNSaoLkoq0txiz8Byf2Hr'
+                        }
+                    },
+                    states: {
+                        on: false,
+                        online: false,
+                        thermostatMode: "cool",
+                        thermostatTemperatureSetpoint: 23.0,
+                        thermostatTemperatureAmbient: 25.1,
+                        thermostatHumidityAmbient: 45.3
+                    }
+                });
+
+                // hack to make more light show when they are added
+                setTimeout(function () {
+                    this.$['light-list'].fire('iron-resize');
+                }.bind(this), 10);
+            },
+
+            _addSwitch: function () {
+                var lightId = getNextLightId();
+                this.push('lights', {
+                    id: String(lightId),
+                    properties : {
+                        type: 'action.devices.types.SWITCH',
+                        traits: [
+                            'action.devices.traits.OnOff'
+                        ],
+                        name: {
+                            defaultNames: ['Switch'],
+                            name: 'Smart Switch ' + lightId,
+                            nicknames: [ this._getNickname(lightId) ]
+                        },
+                        willReportState: false,
+                        roomHint: 'living room',
+                        deviceInfo: {
+                            manufacturer: 'Smart Home Provider',
+                            model: 'g1337',
+                            swVersion: '1.0.11',
+                            hwVersion: '1.0'
+                        },
+                        customData: {
+                            smartHomeProviderId: 'FkldJVJCmDNSaoLkoq0txiz8Byf2Hr'
+                        }
+                    },
+                    states: {
+                        on: false,
+                        online: false,
                     }
                 });
 
